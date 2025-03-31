@@ -1,0 +1,4 @@
+<div class="card" [ngClass]="{ 'flipped': card.flipped || card.matched }" (click)="onFlip()">
+  <img *ngIf="card.flipped || card.matched" [src]="card.image" class="img-fluid">
+  <span *ngIf="!card.flipped && !card.matched">?</span>
+</div>
