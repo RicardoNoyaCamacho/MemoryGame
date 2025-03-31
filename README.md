@@ -2,11 +2,9 @@
 
 ## Instalación
 1. Clona el repositorio:
-git clone https://github.com/tu-usuario/memory-game.git cd memory-game
-2. Instala las dependencias:
-npm install
-3. Inicia el servidor:
-ng serve
+git clone https://github.com/RicardoNoyaCamacho/MemoryGame cd memory-game
+2. Instala las dependencias: npm install
+3. Inicia el servidor: ng serve
 4. Abre `http://localhost:4200` en tu navegador.
 
 ## Tecnologías
