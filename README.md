@@ -17,4 +17,4 @@ git clone https://github.com/RicardoNoyaCamacho/MemoryGame cd memory-game
 Juego de memoria donde debes encontrar las parejas de cartas con imágenes de animales.
 
 ## Despliegue
-Puedes ver el juego en producción en: [GitHub Pages / Netlify](URL_DEL_DESPLIEGUE).
+Puedes ver el juego en producción en: [Netlify](https://memory-rnc.netlify.app).
