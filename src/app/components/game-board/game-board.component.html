@@ -1,15 +1,14 @@
-<div class="container mt-4">
+<div class="container mt-4 text-center">
   <h2>{{ playerName }}'s Memory Game</h2>
   <app-score-board [matches]="matches" [errors]="errors"></app-score-board>
 
   <div class="card-container mt-3">
-    <div
+    <app-card
       *ngFor="let card of cards"
-      class="card"
-      [ngClass]="{ 'flipped': card.flipped || card.matched }"
-      (click)="flipCard(card)">
-      <img *ngIf="card.flipped || card.matched" [src]="card.image" class="img-fluid">
-      <span *ngIf="!card.flipped && !card.matched">?</span>
-    </div>
+      [card]="card"
+      (flip)="flipCard(card)">
+    </app-card>
   </div>
+
+  <button *ngIf="gameCompleted" class="btn btn-primary mt-3" (click)="resetGame()">Reiniciar Juego</button>
 </div>

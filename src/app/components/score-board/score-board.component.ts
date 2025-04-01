@@ -3,8 +3,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'app-score-board',
   standalone: true,
-  templateUrl: './score-board.component.html',
-  styleUrls: ['./score-board.component.css']
+  templateUrl: './score-board.component.html'
 })
 export class ScoreBoardComponent {
   @Input() matches!: number;

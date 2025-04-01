@@ -10,6 +10,7 @@
   cursor: pointer;
   border-radius: 8px;
   transition: transform 0.3s, background-color 0.3s;
+  overflow: hidden;
 }
 
 .card.flipped {
@@ -21,6 +22,6 @@
 .card img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* ✅ Hace que la imagen se ajuste sin deformarse */
+  object-fit: cover;
   border-radius: 8px;
 }

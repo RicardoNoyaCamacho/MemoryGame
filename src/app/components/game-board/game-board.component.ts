@@ -1,19 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ScoreBoardComponent } from '../score-board/score-board.component';
 import { CommonModule } from '@angular/common';
-
-interface Card {
-  id: number;
-  image: string;
-  flipped: boolean;
-  matched: boolean;
-}
+import { CardComponent } from '../card/card.component';
+import { ImageServiceService } from '../../services/image-service.service';
+import { Card } from '../../interfaces/card.interface';
+import { catchError, of, timer } from 'rxjs';
 
 @Component({
   selector: 'app-game-board',
   standalone: true,
-  imports: [ScoreBoardComponent, CommonModule],
+  imports: [ScoreBoardComponent, CommonModule, CardComponent],
   templateUrl: './game-board.component.html',
   styleUrls: ['./game-board.component.css']
 })
@@ -23,30 +19,56 @@ export class GameBoardComponent implements OnInit {
   matches: number = 0;
   errors: number = 0;
   playerName: string = '';
+  gameCompleted: boolean = false;
 
-  constructor(private http: HttpClient) {}
+  private readonly flipDelay = 1000;
+
+  constructor(private imageService: ImageServiceService) {}
 
   ngOnInit() {
-    this.playerName = localStorage.getItem('playerName') || prompt('Enter your name') || 'Player';
-    localStorage.setItem('playerName', this.playerName);
+    this.initializePlayerName();
     this.loadCards();
   }
 
+  private initializePlayerName() {
+    const storedName = localStorage.getItem('playerName');
+    this.playerName = storedName || 'Player';
+    if (!storedName) {
+      localStorage.setItem('playerName', this.playerName);
+    }
+  }
+
   loadCards() {
-    this.http.get<any>('https://fed-team.modyo.cloud/api/content/spaces/animals/types/game/entries?per_page=8')
+    this.imageService.getImages()
+      .pipe(
+        catchError(() => {
+          console.error('Error fetching images');
+          return of({ entries: [] });
+        })
+      )
       .subscribe(response => {
-        const images = response.entries.map((entry: any) => entry.fields.image.url);
-        this.cards = this.shuffle([...images, ...images].map((image, index) => ({
-          id: index,
-          image,
-          flipped: false,
-          matched: false
-        })));
+        const images = this.extractImages(response);
+        this.cards = this.shuffleCards(images);
+        this.resetGameState();
       });
   }
 
+  private extractImages(response: any): string[] {
+    return (response.entries ? Array.from(response.entries as any[]) : [])
+      .map((entry: any) => entry.fields.image.url);
+  }
+
+  private shuffleCards(images: string[]): Card[] {
+    return this.shuffle([...images, ...images].map((image, index) => ({
+      id: index,
+      image,
+      flipped: false,
+      matched: false
+    })));
+  }
+
   flipCard(card: Card) {
-    if (card.flipped || card.matched || this.flippedCards.length >= 2) return;
+    if (this.isCardUnflippable(card)) return;
 
     card.flipped = true;
     this.flippedCards.push(card);
@@ -56,21 +78,51 @@ export class GameBoardComponent implements OnInit {
     }
   }
 
-  checkMatch() {
+  private isCardUnflippable(card: Card): boolean {
+    return card.flipped || card.matched || this.flippedCards.length >= 2;
+  }
+
+  private checkMatch() {
     const [first, second] = this.flippedCards;
     if (first.image === second.image) {
-      first.matched = second.matched = true;
-      this.matches++;
+      this.handleMatch(first, second);
     } else {
-      this.errors++;
-      setTimeout(() => {
-        first.flipped = second.flipped = false;
-      }, 1000);
+      this.handleMismatch(first, second);
     }
     this.flippedCards = [];
   }
 
-  shuffle(array: any[]) {
+  private handleMatch(first: Card, second: Card) {
+    first.matched = second.matched = true;
+    this.matches++;
+    this.checkWinCondition();
+  }
+
+  private handleMismatch(first: Card, second: Card) {
+    this.errors++;
+    timer(this.flipDelay).subscribe(() => {
+      first.flipped = second.flipped = false;
+    });
+  }
+
+  private resetGameState() {
+    this.gameCompleted = false;
+    this.matches = 0;
+    this.errors = 0;
+    this.flippedCards = [];
+  }
+
+  resetGame() {
+    this.loadCards();
+  }
+
+  private checkWinCondition() {
+    if (this.matches === this.cards.length / 2) {
+      this.gameCompleted = true;
+    }
+  }
+
+  private shuffle(array: any[]): any[] {
     return array.sort(() => Math.random() - 0.5);
   }
 }
