@@ -23,7 +23,7 @@ export class GameBoardComponent implements OnInit {
 
   private readonly flipDelay = 1000;
 
-  constructor(private imageService: ImageServiceService) {}
+  constructor(private imageService: ImageServiceService) { }
 
   ngOnInit() {
     this.initializePlayerName();
@@ -32,9 +32,13 @@ export class GameBoardComponent implements OnInit {
 
   private initializePlayerName() {
     const storedName = localStorage.getItem('playerName');
-    this.playerName = storedName || 'Player';
+
     if (!storedName) {
-      localStorage.setItem('playerName', this.playerName);
+      const name = prompt('Enter your name') || 'Player';
+      localStorage.setItem('playerName', name);
+      this.playerName = name;
+    } else {
+      this.playerName = storedName;
     }
   }
 
