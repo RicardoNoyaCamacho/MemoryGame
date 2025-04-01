@@ -1,14 +1,25 @@
-<div class="container mt-4 text-center">
-  <h2>{{ playerName }}'s Memory Game</h2>
-  <app-score-board [matches]="matches" [errors]="errors"></app-score-board>
+<div class="game-board">
+  <h2 class="game-board__player-name">Welcome, {{ playerName }}!</h2>
 
-  <div class="card-container mt-3">
-    <app-card
-      *ngFor="let card of cards"
-      [card]="card"
-      (flip)="flipCard(card)">
-    </app-card>
+  <div class="game-board__score">
+    <p class="game-board__score-item">Aciertos: {{ matches }}</p>
+    <p class="game-board__score-item">Errores: {{ errors }}</p>
   </div>
 
-  <button *ngIf="gameCompleted" class="btn btn-primary mt-3" (click)="resetGame()">Reiniciar Juego</button>
+  <div class="game-board__grid">
+    <app-card
+      *ngFor="let card of cards"
+      class="game-board__card"
+      [card]="card"
+      (click)="flipCard(card)"
+    ></app-card>
+  </div>
+
+  <button
+    *ngIf="gameCompleted"
+    class="game-board__restart-btn btn btn-primary mt-3"
+    (click)="resetGame()"
+  >
+    Reiniciar Juego
+  </button>
 </div>

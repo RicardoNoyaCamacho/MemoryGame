@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ScoreBoardComponent } from '../score-board/score-board.component';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../card/card.component';
 import { ImageServiceService } from '../../services/image-service.service';
@@ -9,7 +8,7 @@ import { catchError, of, timer } from 'rxjs';
 @Component({
   selector: 'app-game-board',
   standalone: true,
-  imports: [ScoreBoardComponent, CommonModule, CardComponent],
+  imports: [CommonModule, CardComponent],
   templateUrl: './game-board.component.html',
   styleUrls: ['./game-board.component.css']
 })
